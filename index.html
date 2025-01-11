@@ -2,34 +2,37 @@
 <html lang="zh-TW">
 <head>
     <meta charset="viewport" content="width=device-width, initial-scale=1.0">
-    <title>路線搜尋器</title>
+    <title>Carchi 咖起 路線搜尋器🔍</title>
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             background-color: #f9f9f9;
-        }
-        .hidden {
-            display: none;
+            overflow-x: hidden;
         }
         .container {
-            max-width: 420px;
+            max-width: 100%;
+            width: 375px;
             margin: 0 auto;
             padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 12px;
         }
         .form-section {
             margin-top: 10px;
         }
         label {
             font-size: 14px;
-            color: #555;
-            margin-top: 8px;
+            margin-top: 5px;
+            display: block;
+            color: #333;
         }
         input, select {
             width: 100%;
-            padding: 12px;
-            margin: 5px 0 15px 0;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
@@ -39,8 +42,8 @@
             color: #d35400;
             border-radius: 8px;
             padding: 10px;
-            margin-bottom: 15px;
             font-size: 12px;
+            margin-bottom: 15px;
             text-align: center;
         }
         .suggestions {
@@ -49,7 +52,7 @@
         .suggestion-item {
             background-color: white;
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #e0e0e0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -63,22 +66,27 @@
             background-color: #e8f5e9;
             border: 1px solid #4CAF50;
             border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 10px;
+            margin-top: 10px;
             text-align: center;
-            color: #2e7d32;
         }
         .no-results {
             color: #757575;
             text-align: center;
             margin-top: 10px;
         }
-        a {
-            color: #007bff;
-            text-decoration: none;
+        button {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
         }
-        a:hover {
-            text-decoration: underline;
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -106,16 +114,23 @@
             <input type="time" id="timeInput">
             
             <label for="airlineInput">航空公司：</label>
-            <input type="text" id="airlineInput" placeholder="例如：韓亞航空、中華航空">
+            <select id="airlineInput">
+                <option value="">選擇航空公司</option>
+            </select>
             
             <label for="flightInput">航班號碼：</label>
             <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
             
-            <label for="pickupInput">上車地點：</label>
-            <input type="text" id="pickupInput" placeholder="例如：第一航廈、弘大">
+            <label for="pickupInput">集合處：</label>
+            <select id="pickupInput">
+                <option value="">選擇集合處</option>
+            </select>
             
             <label for="dropOffInput">下車地點：</label>
-            <input type="text" id="dropOffInput" placeholder="例如：明洞、弘大">
+            <select id="dropOffInput">
+                <option value="">選擇下車地點</option>
+            </select>
+            <button id="showRoutesBtn">顯示所有路線</button>
         </div>
 
         <div id="suggestions" class="suggestions hidden"></div>
@@ -139,6 +154,24 @@
                 }));
                 console.log("已成功載入路線資料");
             });
+            // 提取選項資料
+            data.forEach(item => {
+                item["航空公司"].split("/").forEach(airline => airlinesSet.add(airline.trim()));
+                pickupSet.add(item["集合處"]);
+                dropOffSet.add(item["下車處"]);
+            });
+            populateSelectOptions(document.getElementById("airlineInput"), airlinesSet);
+            populateSelectOptions(document.getElementById("pickupInput"), pickupSet);
+            populateSelectOptions(document.getElementById("dropOffInput"), dropOffSet);
+        });
+        function populateSelectOptions(selectElement, dataSet) {
+            dataSet.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                selectElement.appendChild(optionElement);
+            });
+        }
 
         const serviceTypeSelect = document.getElementById("serviceType");
         const searchSection = document.getElementById("searchSection");
@@ -147,7 +180,7 @@
         const suggestions = document.getElementById("suggestions");
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
-
+        const showRoutesBtn = document.getElementById("showRoutesBtn");
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
             if (serviceType) {
@@ -158,6 +191,16 @@
                 searchSection.classList.add("hidden");
                 resetFilters();
             }
+        });
+
+        showRoutesBtn.addEventListener("click", () => {
+            const serviceType = serviceTypeSelect.value;
+            if (!serviceType) {
+                alert("請先選擇服務類型！");
+                return;
+            }
+            const filtered = routes.filter(item => item["路線類型"] === serviceType);
+            displaySuggestions(filtered);
         });
 
         function resetFilters() {
@@ -231,16 +274,14 @@
         }
 
         function showHighlight(route) {
-            const selectedRoute = routes.find(item => item.Route === route);
             highlightBox.innerHTML = `
-                <b>您選擇的路線代號：</b>${selectedRoute.Route}<br>
-                航班號碼：${selectedRoute.航班號碼}<br>
-                上車地點：${selectedRoute.集合處}<br>
-                下車地點：${selectedRoute.下車處}<br>
-                預計車程：${convertToMinutes(selectedRoute["預計車程"])} 分鐘<br>
-                預計到達時間：${selectedRoute.預計到達時間}
+                <b>您選擇的路線代號：</b>${route}<br>
+                <button onclick="sendToLine('${route}')">確認帶回 LINE Bot</button>
             `;
             highlightBox.classList.remove("hidden");
+        }
+        function sendToLine(route) {
+            alert(`路線 ${route} 已帶回 LINE Bot`);
         }
 
         document.querySelectorAll("input").forEach(input => {
