@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <title>路線搜尋器</title>
     <style>
         body {
@@ -10,7 +9,10 @@
             margin: 0;
             padding: 20px;
         }
-        input {
+        .hidden {
+            display: none;
+        }
+        input, select {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -23,70 +25,72 @@
             background-color: #f9f9f9;
             border-radius: 5px;
         }
-        .suggestion-item {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .suggestion-item:hover {
-            background-color: #e0f7fa;
-        }
     </style>
 </head>
 <body>
     <h2>選擇您的路線</h2>
-    <input type="text" id="searchInput" placeholder="例如：韓亞、KE102、弘大">
-    <div id="suggestions" class="suggestions" style="display: none;"></div>
+
+    <!-- 步驟 1：選擇接機或送機 -->
+    <label for="serviceType">選擇服務類型：</label>
+    <select id="serviceType">
+        <option value="">請選擇</option>
+        <option value="接機服務">接機服務</option>
+        <option value="送機服務">送機服務</option>
+    </select>
+
+    <!-- 步驟 2：選擇其他條件 -->
+    <label for="filterInput">輸入其他篩選條件（選填）：</label>
+    <input type="text" id="filterInput" placeholder="航空公司、航班號、時間、地點等...">
+    <div id="suggestions" class="suggestions hidden"></div>
+
     <button id="confirmButton">確認選擇</button>
 
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
     <script>
         let routes = [];
 
-        // 動態讀取 JSON 檔案
+        // 動態載入 JSON 檔案
         fetch('All_Route.json')
             .then(response => response.json())
             .then(data => {
-                routes = data; // 將 JSON 資料存入 routes
+                routes = data.map(item => {
+                    return {
+                        ...item,
+                        航班時間: item["航班抵達/起飛時間"]
+                    };
+                });
                 console.log("已成功載入路線資料");
-            })
-            .catch(error => {
-                console.error("讀取 JSON 檔案時發生錯誤:", error);
-                alert("無法讀取路線資料，請稍後再試。");
             });
 
-        const fuseOptions = { keys: ["航班號碼", "航空公司", "下車處", "Route"] };
-        const searchInput = document.getElementById("searchInput");
+        const serviceTypeSelect = document.getElementById("serviceType");
+        const filterInput = document.getElementById("filterInput");
         const suggestions = document.getElementById("suggestions");
 
-        searchInput.addEventListener("input", (event) => {
-            const value = event.target.value.trim();
-            if (value.length === 0) {
-                suggestions.style.display = "none";
-                return;
-            }
-
-            const fuse = new Fuse(routes, fuseOptions);
-            const results = fuse.search(value).slice(0, 5); // 顯示最多 5 個結果
-            suggestions.innerHTML = results.map(result => `
-                <div class="suggestion-item" onclick="selectRoute('${result.item.Route}')">
-                    ${result.item.航空公司} - ${result.item.航班號碼} - ${result.item.下車處} (${result.item.航班抵達/起飛時間})
-                </div>
-            `).join('');
-            suggestions.style.display = "block";
+        serviceTypeSelect.addEventListener("change", () => {
+            filterInput.value = "";  // 清空輸入框
+            suggestions.innerHTML = "";  // 清空建議清單
         });
 
-        function selectRoute(route) {
-            searchInput.value = route;
-            suggestions.style.display = "none";
-        }
+        filterInput.addEventListener("input", (event) => {
+            const serviceType = serviceTypeSelect.value;
+            const query = event.target.value.trim();
 
-        document.getElementById("confirmButton").addEventListener("click", () => {
-            const selectedRoute = searchInput.value.trim();
-            if (!selectedRoute) {
-                alert("請選擇或輸入正確的路線！");
+            if (!serviceType) {
+                alert("請先選擇服務類型！");
                 return;
             }
-            alert(`已選擇路線：${selectedRoute}`);
+
+            const fuse = new Fuse(routes.filter(item => item["路線類型"] === serviceType), {
+                keys: ["航空公司", "航班號碼", "下車處", "Route", "航班時間"]
+            });
+
+            const results = fuse.search(query).slice(0, 5);
+            suggestions.innerHTML = results.map(result => `
+                <div class="suggestion-item">
+                    ${result.item.航空公司} - ${result.item.航班號碼} - ${result.item.航班時間} - ${result.item.下車處}
+                </div>
+            `).join('');
+            suggestions.classList.remove("hidden");
         });
     </script>
 </body>
