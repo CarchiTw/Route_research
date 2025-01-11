@@ -253,26 +253,43 @@
         }
     
         function displaySuggestions(results) {
-            suggestions.innerHTML = "";
-            highlightBox.classList.add("hidden");
-    
+            suggestions.innerHTML = "";  // 清空先前的建議清單
+            highlightBox.classList.add("hidden");  // 隱藏綠色框
+        
             if (results.length === 0) {
+                // 沒有符合的路線時顯示提示訊息
                 suggestions.classList.add("hidden");
                 noResults.classList.remove("hidden");
             } else {
-                noResults.classList.add("hidden");
+                noResults.classList.add("hidden");  // 隱藏無結果提示
+        
+                // 顯示符合條件的路線
                 suggestions.innerHTML = results.map(result => {
                     const durationInMinutes = convertToMinutes(result["預計車程"]);
-                    return `
-                        <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                            配合航班：${result.航班號碼} (${result.航班時間} 抵達/出發)<br>
-                            上車地點：${result.集合處}<br>
-                            預計路程時間：${durationInMinutes} 分鐘<br>
-                            下車地點：${result.下車處}
-                        </div>
-                    `;
-                }).join('');
-                suggestions.classList.remove("hidden");
+        
+                    // 根據 "路線類型" 決定顯示的內容
+                    if (result["路線類型"] === "接機服務") {
+                        return `
+                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
+                                配合航班：${result.航班號碼} (${result.航班時間} 抵達)<br>
+                                上車地點：${result.集合處}<br>
+                                預計路程時間：${durationInMinutes} 分鐘<br>
+                                下車地點：${result.下車處}
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
+                                建議航班：${result.航班號碼} (${result.航班時間} 出發)<br>
+                                集合時間地點：${result.集合處} (${result.集合時間})<br>
+                                預計路程時間：${durationInMinutes} 分鐘<br>
+                                預計抵達時間：${result.預計到達時間}<br>
+                                下車地點：${result.下車處}
+                            </div>
+                        `;
+                    }
+                }).join('');  // 將所有結果拼接為 HTML 字串
+                suggestions.classList.remove("hidden");  // 顯示搜尋結果
             }
         }
     
