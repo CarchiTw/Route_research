@@ -325,6 +325,9 @@
                 <b>您選擇的路線代號：</b>${route}<br>
                 <button onclick="sendToLine('${route}')">確認帶回 LINE Bot</button>
             `;
+            
+            // 強制移除 display: none
+            highlightBox.style.display = "block";
             highlightBox.classList.remove("hidden");
         }
     
