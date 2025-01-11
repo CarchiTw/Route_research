@@ -62,10 +62,10 @@
         <option value="送機服務">送機 (市區至機場)</option>
     </select>
 
-    <!-- 步驟 2：其他搜尋欄位（隱藏，等選擇類型後顯示） -->
+    <!-- 步驟 2：其他搜尋欄位 -->
     <div id="searchSection" class="hidden form-section">
         <label id="flightTimeLabel" for="timeInput">航班時間：</label>
-        <input type="text" id="timeInput" placeholder="例如：20:30、09:00">
+        <input type="time" id="timeInput">
         
         <label for="airlineInput">航空公司：</label>
         <input type="text" id="airlineInput" placeholder="例如：韓亞航空、中華航空">
@@ -94,7 +94,7 @@
             .then(data => {
                 routes = data.map(item => ({
                     ...item,
-                    航班時間: item["航班時間"] || "未提供"  // 確保顯示預設值
+                    航班時間: item["航班時間"] || "00:00"  // 確保顯示預設值
                 }));
                 console.log("已成功載入路線資料");
             });
@@ -102,6 +102,7 @@
         const serviceTypeSelect = document.getElementById("serviceType");
         const searchSection = document.getElementById("searchSection");
         const flightTimeLabel = document.getElementById("flightTimeLabel");
+        const timeInput = document.getElementById("timeInput");
         const suggestions = document.getElementById("suggestions");
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
@@ -112,26 +113,39 @@
             if (serviceType) {
                 searchSection.classList.remove("hidden");
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
-                filterRoutes();  // 初始化篩選
             } else {
                 searchSection.classList.add("hidden");
             }
         });
 
+        function timeWithinOneHour(targetTime, flightTime) {
+            const [targetHour, targetMinute] = targetTime.split(":").map(Number);
+            const [flightHour, flightMinute] = flightTime.split(":").map(Number);
+
+            const targetDate = new Date();
+            const flightDate = new Date();
+            targetDate.setHours(targetHour, targetMinute);
+            flightDate.setHours(flightHour, flightMinute);
+
+            const diffInMinutes = Math.abs((targetDate - flightDate) / (1000 * 60));
+            return diffInMinutes <= 60;
+        }
+
         function filterRoutes() {
             const serviceType = serviceTypeSelect.value;
             const airline = document.getElementById("airlineInput").value.trim().toLowerCase();
             const flightNumber = document.getElementById("flightInput").value.trim().toLowerCase();
-            const time = document.getElementById("timeInput").value.trim();
+            const time = timeInput.value.trim();
             const pickup = document.getElementById("pickupInput").value.trim().toLowerCase();
             const dropOff = document.getElementById("dropOffInput").value.trim().toLowerCase();
 
-            let filtered = routes;
+            if (!serviceType) return;
 
-            if (serviceType) filtered = filtered.filter(item => item["路線類型"] === serviceType);
+            let filtered = routes.filter(item => item["路線類型"] === serviceType);
+
             if (airline) filtered = filtered.filter(item => item["航空公司"].toLowerCase().includes(airline));
             if (flightNumber) filtered = filtered.filter(item => item["航班號碼"].toLowerCase().includes(flightNumber));
-            if (time) filtered = filtered.filter(item => item["航班時間"] === time);
+            if (time) filtered = filtered.filter(item => timeWithinOneHour(time, item["航班時間"]));
             if (pickup) filtered = filtered.filter(item => item["集合處"].toLowerCase().includes(pickup));
             if (dropOff) filtered = filtered.filter(item => item["下車處"].toLowerCase().includes(dropOff));
 
@@ -147,7 +161,10 @@
                 noResults.classList.add("hidden");
                 suggestions.innerHTML = results.map(result => `
                     <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                        ${result.航空公司} - ${result.航班號碼} - ${result.航班時間} - ${result.下車處}
+                        航班號碼：${result.航班號碼}<br>
+                        航班時間：${result.航班時間}<br>
+                        集合處：${result.集合處}<br>
+                        下車處：${result.下車處}
                     </div>
                 `).join('');
                 suggestions.classList.remove("hidden");
@@ -156,12 +173,14 @@
 
         function showHighlight(route) {
             const selectedRoute = routes.find(item => item.Route === route);
-            highlightBox.innerHTML = `與您設定匹配的推薦路線為：<b>${selectedRoute.Route}</b><br>
-            航班號碼：${selectedRoute.航班號碼}<br>
-            上車地點：${selectedRoute.集合處}<br>
-            下車地點：${selectedRoute.下車處}<br>
-            預計車程：${selectedRoute.預計車程}<br>
-            預計到達時間：${selectedRoute.預計到達時間}`;
+            highlightBox.innerHTML = `
+                <b>推薦路線：</b>${selectedRoute.Route}<br>
+                航班號碼：${selectedRoute.航班號碼}<br>
+                上車地點：${selectedRoute.集合處}<br>
+                下車地點：${selectedRoute.下車處}<br>
+                預計車程：${selectedRoute.預計車程}<br>
+                預計到達時間：${selectedRoute.預計到達時間}
+            `;
             highlightBox.classList.remove("hidden");
         }
 
