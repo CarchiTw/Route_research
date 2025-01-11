@@ -33,13 +33,6 @@
             margin-bottom: 10px;
             text-align: center;
         }
-        .form-section {
-            display: none;
-            margin-top: 10px;
-        }
-        .form-section.active {
-            display: block;
-        }
         label {
             font-size: 13px;
             margin-top: 5px;
@@ -106,32 +99,30 @@
         </select>
 
         <!-- 步驟 2：其他搜尋欄位 -->
-        <div id="searchSection" class="hidden form-section">
-            <label id="flightTimeLabel" for="timeInput">航班時間：</label>
-            <input type="time" id="timeInput">
-            
-            <label for="airlineInput">航空公司：</label>
-            <select id="airlineInput">
-                <option value="">選擇航空公司</option>
-            </select>
-            
-            <label for="flightInput">航班號碼：</label>
-            <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
-            
-            <label for="pickupInput">上車地點：</label>
-            <select id="pickupInput">
-                <option value="">選擇上車地點</option>
-            </select>
-            
-            <label for="dropOffInput">下車地點：</label>
-            <select id="dropOffInput">
-                <option value="">選擇下車地點</option>
-            </select>
-        </div>
+        <label id="flightTimeLabel" for="timeInput">航班時間：</label>
+        <input type="time" id="timeInput" class="disabled">
 
-        <div id="suggestions" class="suggestions hidden"></div>
-        <div id="highlightBox" class="highlight-box hidden"></div>
-        <p id="noResults" class="no-results hidden">目前無符合條件的路線。</p>
+        <label for="airlineInput">航空公司：</label>
+        <select id="airlineInput" class="disabled">
+            <option value="">選擇航空公司</option>
+        </select>
+
+        <label for="flightInput">航班號碼：</label>
+        <input type="text" id="flightInput" class="disabled" placeholder="例如：OZ714、CI9066">
+
+        <label for="pickupInput">上車地點：</label>
+        <select id="pickupInput" class="disabled">
+            <option value="">選擇上車地點</option>
+        </select>
+
+        <label for="dropOffInput">下車地點：</label>
+        <select id="dropOffInput" class="disabled">
+            <option value="">選擇下車地點</option>
+        </select>
+
+        <div id="suggestions" class="suggestions"></div>
+        <div id="highlightBox" class="highlight-box"></div>
+        <p id="noResults" class="no-results">目前無符合條件的路線。</p>
 
     </div>
     <script>
@@ -181,12 +172,12 @@
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
             if (serviceType) {
-                searchSection.classList.remove("hidden");  // 顯示其他篩選器
+                inputs.forEach(input => input.classList.remove("disabled"));
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
                 resetFilters(false);  // 重置其他欄位，但保留「服務類型」
                 updateSelectOptions(serviceType);
             } else {
-                searchSection.classList.add("hidden");  // 隱藏搜尋欄位
+                inputs.forEach(input => input.classList.add("disabled"));  // 隱藏搜尋欄位
                 resetFilters(true);  // 完全重置，包括「服務類型」
             }
         });
