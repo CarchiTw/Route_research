@@ -177,13 +177,6 @@
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
     
-        // 頁面加載時隱藏其他篩選器
-        window.onload = () => {
-            searchSection.classList.add("hidden");
-            highlightBox.classList.add("hidden");
-            noResults.classList.add("hidden");
-        };
-    
         // 當選擇服務類型時顯示篩選器
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
