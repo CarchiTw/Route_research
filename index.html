@@ -7,18 +7,26 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f6f6f6;
+            padding: 0;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             overflow-x: hidden;
         }
         .container {
             max-width: 100%;
             width: 375px;
-            margin: 0 auto;
-            padding: 15px;
+            height: 100%;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             background-color: white;
             border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
         }
         h2 {
             text-align: center;
@@ -28,10 +36,24 @@
             background-color: #fffae5;
             color: #d35400;
             border-radius: 8px;
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.5em;
+        }
+        .info-box b {
+            display: block;
+            font-size: 16px;
+        }
+        .highlight-box {
+            background-color: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 10px;
             margin-bottom: 10px;
             text-align: center;
+            display: none;
         }
         label {
             font-size: 13px;
@@ -64,15 +86,6 @@
         .suggestion-item:hover {
             background-color: #f0f8ff;
         }
-        .highlight-box {
-            background-color: #e8f5e9;
-            border: 1px solid #4CAF50;
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 10px;
-            text-align: center;
-            display: none;
-        }
         .no-results {
             color: #757575;
             text-align: center;
@@ -86,10 +99,11 @@
     <div class="container">
         <h2>Carchi 咖起 路線搜尋器🔍</h2>
         <div class="info-box">
-            🚨 <b>航班路線提醒</b>: 接機服務暫僅供夜間航班，送機服務暫僅提供早晨航班。
+            🚨<b>航班路線提醒</b>
+            <p>接機服務暫僅供<strong>「夜間」</strong>航班，送機服務暫僅提供<strong>「早晨」</strong>航班</p>
             <p>若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！</p>
         </div>
-
+        <div id="highlightBox" class="highlight-box"></div>
         <!-- 步驟 1：選擇服務類型 -->
         <label for="serviceType">選擇服務類型：</label>
         <select id="serviceType">
@@ -121,7 +135,6 @@
         </select>
 
         <div id="suggestions" class="suggestions"></div>
-        <div id="highlightBox" class="highlight-box"></div>
         <p id="noResults" class="no-results">目前無符合條件的路線。</p>
 
     </div>
