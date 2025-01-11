@@ -76,19 +76,6 @@
             text-align: center;
             margin-top: 10px;
         }
-        button {
-            width: 100%;
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
@@ -122,16 +109,15 @@
             <label for="flightInput">航班號碼：</label>
             <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
             
-            <label for="pickupInput">集合處：</label>
+            <label for="pickupInput">上車地點：</label>
             <select id="pickupInput">
-                <option value="">選擇集合處</option>
+                <option value="">選擇上車地點</option>
             </select>
             
             <label for="dropOffInput">下車地點：</label>
             <select id="dropOffInput">
                 <option value="">選擇下車地點</option>
             </select>
-            <button id="showRoutesBtn">顯示所有路線</button>
         </div>
 
         <div id="suggestions" class="suggestions hidden"></div>
@@ -142,9 +128,7 @@
 
     <script>
         let routes = [];
-        let airlinesSet = new Set();
-        let pickupSet = new Set();
-        let dropOffSet = new Set();
+        let airlinesSet = new Set(); // 儲存航空公司選項
 
         // 動態讀取 JSON 檔案
         fetch('All_Route.json')
@@ -159,13 +143,9 @@
 
                 data.forEach(item => {
                     item["航空公司"].split("/").forEach(airline => airlinesSet.add(airline.trim()));
-                    pickupSet.add(item["集合處"]);
-                    dropOffSet.add(item["下車處"]);
                 });
 
                 populateSelectOptions(document.getElementById("airlineInput"), airlinesSet);
-                populateSelectOptions(document.getElementById("pickupInput"), pickupSet);
-                populateSelectOptions(document.getElementById("dropOffInput"), dropOffSet);
                 console.log("已成功載入路線資料");
             });
 
@@ -185,34 +165,46 @@
         const suggestions = document.getElementById("suggestions");
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
-        const showRoutesBtn = document.getElementById("showRoutesBtn");
+        
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
             if (serviceType) {
                 searchSection.classList.remove("hidden");
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
                 resetFilters();
+                updateSelectOptions(serviceType);  // 更新集合處與下車地點選項
             } else {
                 searchSection.classList.add("hidden");
                 resetFilters();
             }
         });
 
-        showRoutesBtn.addEventListener("click", () => {
-            const serviceType = serviceTypeSelect.value;
-            if (!serviceType) {
-                alert("請先選擇服務類型！");
-                return;
-            }
-            const filtered = routes.filter(item => item["路線類型"] === serviceType);
-            displaySuggestions(filtered);
-        });
 
         function resetFilters() {
             document.querySelectorAll("input").forEach(input => input.value = "");
             suggestions.innerHTML = "";
             highlightBox.classList.add("hidden");
             noResults.classList.add("hidden");
+        }
+        function updateSelectOptions(serviceType) {
+            const pickupOptions = serviceType === "接機服務"
+                ? ["仁川第一航廈", "仁川第二航廈", "桃園第一航廈"]
+                : ["弘大", "明洞"];
+            const dropOffOptions = serviceType === "接機服務"
+                ? ["弘大", "明洞", "台北"]
+                : ["仁川第一航廈", "仁川第二航廈"];
+
+            populateSelect(pickupInput, pickupOptions);
+            populateSelect(dropOffInput, dropOffOptions);
+        }
+        function populateSelect(selectElement, options) {
+            selectElement.innerHTML = `<option value="">請選擇</option>`;
+            options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                selectElement.appendChild(optionElement);
+            });
         }
 
         function convertToMinutes(duration) {
@@ -257,25 +249,35 @@
         function displaySuggestions(results) {
             if (results.length === 0) {
                 suggestions.classList.add("hidden");
-                highlightBox.classList.add("hidden");
                 noResults.classList.remove("hidden");
             } else {
                 noResults.classList.add("hidden");
                 suggestions.innerHTML = results.map(result => {
                     const durationInMinutes = convertToMinutes(result["預計車程"]);
-                    return `
-                        <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                            <b>路線代號：</b>${result.Route}<br>
-                            航班號碼：${result.航班號碼} (${result.航班時間})<br>
-                            集合處：${result.集合處}<br>
-                            預計路程時間：${durationInMinutes} 分鐘<br>
-                            ${result["路線類型"] === "送機服務" ? `預計抵達時間：${result.預計到達時間}<br>` : ""}
-                            下車地點：${result.下車處}
-                        </div>
-                    `;
+                    if (result["路線類型"] === "接機服務") {
+                        return `
+                            <div class="suggestion-item">
+                                配合航班：${result.航班號碼} (${result.航班時間} 抵達)<br>
+                                上車地點：${result.集合處}<br>
+                                預計路程時間：${durationInMinutes} 分鐘<br>
+                                下車地點：${result.下車處}
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="suggestion-item">
+                                建議航班：${result.航班號碼} (${result.航班時間} 出發)<br>
+                                集合時間地點：${result.集合處} (${result.集合時間})<br>
+                                預計路程時間：${durationInMinutes} 分鐘<br>
+                                預計抵達時間：${result.預計到達時間}<br>
+                                下車地點：${result.下車處}
+                            </div>
+                        `;
+                    }
                 }).join('');
                 suggestions.classList.remove("hidden");
             }
+        }
         }
 
         function showHighlight(route) {
