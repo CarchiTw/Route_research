@@ -167,17 +167,28 @@
         const suggestions = document.getElementById("suggestions");
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
-    
+       
+        // 將所有進階篩選欄位放入陣列
+        const inputs = [timeInput, airlineInput, flightInput, pickupInput, dropOffInput];
         // 當選擇服務類型時顯示篩選器
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
+        
             if (serviceType) {
-                inputs.forEach(input => input.classList.remove("disabled"));
+                // 啟用所有輸入欄位
+                inputs.forEach(input => {
+                    input.classList.remove("disabled");
+                    input.removeAttribute("disabled");  // 移除禁用屬性
+                });
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
                 resetFilters(false);  // 重置其他欄位，但保留「服務類型」
-                updateSelectOptions(serviceType);
+                updateSelectOptions(serviceType);  // 更新選項內容
             } else {
-                inputs.forEach(input => input.classList.add("disabled"));  // 隱藏搜尋欄位
+                // 禁用所有輸入欄位
+                inputs.forEach(input => {
+                    input.classList.add("disabled");
+                    input.setAttribute("disabled", true);  // 禁用欄位
+                });
                 resetFilters(true);  // 完全重置，包括「服務類型」
             }
         });
@@ -188,16 +199,14 @@
                 serviceTypeSelect.value = "";  // 重置「服務類型」欄位
             }
         
-            // 重置其他篩選器 (input 和 select)
-            document.querySelectorAll("#searchSection input, #searchSection select").forEach(input => {
-                input.value = "";
-            });
+            // 清空其他輸入欄位的值
+            inputs.forEach(input => input.value = "");
         
-            // 隱藏結果區域
+            // 清空結果區域
             suggestions.innerHTML = "";
             highlightBox.classList.add("hidden");
             noResults.classList.add("hidden");
-        } 
+        }
     
         function updateSelectOptions(serviceType) {
             const pickupOptions = serviceType === "接機服務"
