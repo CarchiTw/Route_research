@@ -270,8 +270,8 @@
     
         function displaySuggestions(results) {
             suggestions.innerHTML = "";  // 清空先前的建議清單
-            highlightBox.classList.add("hidden");  // 隱藏綠色框
-            
+            highlightBox.classList.add("hidden");  // 隱藏 highlightBox
+        
             if (results.length === 0) {
                 // 顯示 "目前無符合條件的路線"
                 noResults.style.display = "block";  // 顯示提示框
@@ -279,35 +279,43 @@
             } else {
                 noResults.style.display = "none";  // 隱藏無結果提示
                 suggestions.style.display = "block";  // 顯示建議結果區域
-                suggestions.innerHTML = results.map(result => {
+        
+                results.forEach(result => {
                     const durationInMinutes = convertToMinutes(result["預計車程"]);
+                    const suggestionDiv = document.createElement("div");
+                    suggestionDiv.className = "suggestion-item";
+        
+                    // 根據「路線類型」決定顯示內容
                     if (result["路線類型"] === "接機服務") {
-                        return `
-                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                                航空公司：${result.航空公司}
-                                配合航班：${result.航班號碼} (${result.航班時間} 抵達)<br>
-                                上車地點：${result.集合處}<br>
-                                預計車程：${durationInMinutes} 分鐘<br>
-                                下車地點：${result.下車處}
-                            </div>
+                        suggestionDiv.innerHTML = `
+                            航空公司：${result.航空公司 || ''}<br>
+                            配合航班：${result.航班號碼 || ''} (${result.航班時間 || ''} 抵達)<br>
+                            上車地點：${result.集合處 || ''}<br>
+                            預計車程：${durationInMinutes} 分鐘<br>
+                            下車地點：${result.下車處 || ''}
                         `;
                     } else {
-                        return `
-                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                                建議航班：${result.航空公司}${result.航班號碼} (${result.航班時間} 起飛)<br>
-                                集合時間地點：${result.集合處} (${result.集合時間})<br>
-                                預計車程：${durationInMinutes} 分鐘<br>
-                                預計抵達時間：${result.預計到達時間}<br>
-                                下車地點：${result.下車處}
-                            </div>
+                        suggestionDiv.innerHTML = `
+                            建議航班：${result.航空公司 || ''}${result.航班號碼 || ''} (${result.航班時間 || ''} 起飛)<br>
+                            集合時間地點：${result.集合處 || ''} (${result.集合時間 || ''})<br>
+                            預計車程：${durationInMinutes} 分鐘<br>
+                            預計抵達時間：${result.預計到達時間 || ''}<br>
+                            下車地點：${result.下車處 || ''}
                         `;
                     }
-                }).join('');
-                suggestions.classList.remove("hidden");  // 顯示搜尋結果
+        
+                    // 綁定點擊事件來顯示 highlightBox
+                    suggestionDiv.addEventListener("click", () => {
+                        showHighlight(result.Route || "無路線代號");
+                    });
+        
+                    suggestions.appendChild(suggestionDiv);
+                });
             }
         }
-    
+        
         function showHighlight(route) {
+            console.log("Route 傳入值：", route);  // 確認 route 值是否正確
             if (!route) {
                 console.error("無法顯示路線資訊，Route 為空值。");
                 return;
