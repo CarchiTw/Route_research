@@ -181,12 +181,12 @@
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
             if (serviceType) {
-                searchSection.classList.remove("hidden");
+                searchSection.classList.remove("hidden");  // 顯示其他篩選器
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
-                resetFilters(false);  // 重置其他篩選欄位，但保留「服務類型」
+                resetFilters(false);  // 重置其他欄位，但保留「服務類型」
                 updateSelectOptions(serviceType);
             } else {
-                searchSection.classList.add("hidden");
+                searchSection.classList.add("hidden");  // 隱藏搜尋欄位
                 resetFilters(true);  // 完全重置，包括「服務類型」
             }
         });
@@ -196,17 +196,17 @@
             if (resetServiceType) {
                 serviceTypeSelect.value = "";  // 重置「服務類型」欄位
             }
-            
-            // 重置其他篩選器的值 (排除 serviceTypeSelect)
+        
+            // 重置其他篩選器 (input 和 select)
             document.querySelectorAll("#searchSection input, #searchSection select").forEach(input => {
                 input.value = "";
             });
         
-            // 隱藏提示與結果
+            // 隱藏結果區域
             suggestions.innerHTML = "";
             highlightBox.classList.add("hidden");
             noResults.classList.add("hidden");
-        }    
+        } 
     
         function updateSelectOptions(serviceType) {
             const pickupOptions = serviceType === "接機服務"
