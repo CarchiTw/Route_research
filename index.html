@@ -167,28 +167,27 @@
         const suggestions = document.getElementById("suggestions");
         const highlightBox = document.getElementById("highlightBox");
         const noResults = document.getElementById("noResults");
-       
+
         // 將所有進階篩選欄位放入陣列
         const inputs = [timeInput, airlineInput, flightInput, pickupInput, dropOffInput];
+        // **初始化 - 禁用所有篩選欄位**
+        window.addEventListener("load", () => {
+            inputs.forEach(input => input.setAttribute("disabled", true));
+        });
         // 當選擇服務類型時顯示篩選器
         serviceTypeSelect.addEventListener("change", () => {
             const serviceType = serviceTypeSelect.value;
         
             if (serviceType) {
                 // 啟用所有輸入欄位
-                inputs.forEach(input => {
-                    input.classList.remove("disabled");
-                    input.removeAttribute("disabled");  // 移除禁用屬性
-                });
+                inputs.forEach(input => input.removeAttribute("disabled"));
                 flightTimeLabel.textContent = serviceType === "接機服務" ? "抵達時間：" : "起飛時間：";
                 resetFilters(false);  // 重置其他欄位，但保留「服務類型」
                 updateSelectOptions(serviceType);  // 更新選項內容
             } else {
                 // 禁用所有輸入欄位
-                inputs.forEach(input => {
-                    input.classList.add("disabled");
-                    input.setAttribute("disabled", true);  // 禁用欄位
-                });
+                // 選擇 "請選擇" 時禁用所有欄位
+                inputs.forEach(input => input.setAttribute("disabled", true));
                 resetFilters(true);  // 完全重置，包括「服務類型」
             }
         });
@@ -205,7 +204,7 @@
             // 清空結果區域
             suggestions.innerHTML = "";
             highlightBox.classList.add("hidden");
-            noResults.classList.add("hidden");
+            noResults.style.display = "none";
         }
     
         function updateSelectOptions(serviceType) {
