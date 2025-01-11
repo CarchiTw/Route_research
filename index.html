@@ -29,7 +29,7 @@
             color: #d35400;
             border-radius: 8px;
             padding: 5px 10px;
-            font-size: 14px;
+            font-size: 12px;
             margin-bottom: 10px;
             text-align: center;
         }
@@ -86,8 +86,8 @@
     <div class="container">
         <h2>Carchi 咖起 路線搜尋器🔍</h2>
         <div class="info-box">
-            🚨 <b>航班路線提醒</b>: 目前接機僅提供晚間 8 點後的航班，送機僅提供早上 10 點前的航班。
-            <p>若找不到您想要的航班，請使用 <a href="#">路線許願池</a> 功能！</p>
+            🚨 <b>航班路線提醒</b>: 接機服務暫僅供夜間航班，送機服務暫僅提供早晨航班。
+            <p>若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！</p>
         </div>
 
         <!-- 步驟 1：選擇服務類型 -->
@@ -288,6 +288,7 @@
                     // 根據「路線類型」決定顯示內容
                     if (result["路線類型"] === "接機服務") {
                         suggestionDiv.innerHTML = `
+                            路線代號：${result.Route || ''}<br>
                             航空公司：${result.航空公司 || ''}<br>
                             配合航班：${result.航班號碼 || ''} (${result.航班時間 || ''} 抵達)<br>
                             上車地點：${result.集合處 || ''}<br>
@@ -296,7 +297,9 @@
                         `;
                     } else {
                         suggestionDiv.innerHTML = `
-                            建議航班：${result.航空公司 || ''}${result.航班號碼 || ''} (${result.航班時間 || ''} 起飛)<br>
+                            路線代號：${result.Route || ''}<br>
+                            航班公司：${result.航空公司 || ''}<br>
+                            建議航班：${result.航班號碼 || ''} (${result.航班時間 || ''} 起飛)<br>
                             集合時間地點：${result.集合處 || ''} (${result.集合時間 || ''})<br>
                             預計車程：${durationInMinutes} 分鐘<br>
                             預計抵達時間：${result.預計到達時間 || ''}<br>
