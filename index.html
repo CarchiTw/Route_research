@@ -5,98 +5,123 @@
     <title>路線搜尋器</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f9f9f9;
         }
         .hidden {
             display: none;
         }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 10px;
+        }
         .form-section {
-            margin-top: 15px;
+            margin-top: 10px;
+        }
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
         }
         input, select {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .suggestions {
+            padding: 12px;
+            margin: 5px 0 15px 0;
             border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-        }
-        .suggestion-item {
-            padding: 8px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .suggestion-item:hover {
-            background-color: #e0f7fa;
-        }
-        .no-results {
-            text-align: center;
-            color: #666;
-            margin-top: 10px;
-        }
-        .highlight-box {
-            border: 2px solid #4CAF50;
-            background-color: #f0fff4;
-            padding: 15px;
             border-radius: 8px;
-            margin-top: 15px;
-            text-align: center;
+            font-size: 16px;
         }
         .info-box {
-            border: 2px dashed #f39c12;
-            background-color: #fff8e1;
-            padding: 15px;
+            background-color: #fff8e5;
+            color: #d35400;
             border-radius: 8px;
+            padding: 10px;
             margin-bottom: 15px;
+            font-size: 12px;
             text-align: center;
-            color: #8a6d3b;
+        }
+        .suggestions {
+            margin-top: 10px;
+        }
+        .suggestion-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .suggestion-item:hover {
+            background-color: #f0f8ff;
+        }
+        .highlight-box {
+            background-color: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            color: #2e7d32;
+        }
+        .no-results {
+            color: #757575;
+            text-align: center;
+            margin-top: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h2>選擇您的路線</h2>
-    <div class="info-box">
-        <p>🚨 **航班路線提醒** 🚨</p>
-        <p>送機路線目前僅提供早上 10 點前的航班</p>
-        <p>接機路線目前僅提供晚間 8 點後的航班</p>
-        <p>若找不到您想要的航班，請使用 <a href="#">路線許願池</a> 功能！</p>
-    </div>
-    <!-- 步驟 1：選擇服務類型 -->
-    <label for="serviceType">選擇服務類型：</label>
-    <select id="serviceType">
-        <option value="">請選擇</option>
-        <option value="接機服務">接機 (機場至市區)</option>
-        <option value="送機服務">送機 (市區至機場)</option>
-    </select>
+    <div class="container">
+        <h2 style="text-align: center; color: #333;">選擇您的路線</h2>
+        <div class="info-box">
+            <p>🚨 <b>航班路線提醒</b></p>
+            <p>送機路線目前僅提供早上 10 點前的航班</p>
+            <p>接機路線目前僅提供晚間 8 點後的航班</p>
+            <p>若找不到您想要的航班，請使用 <a href="#">路線許願池</a> 功能！</p>
+        </div>
 
-    <!-- 步驟 2：其他搜尋欄位 -->
-    <div id="searchSection" class="hidden form-section">
-        <label id="flightTimeLabel" for="timeInput">航班時間：</label>
-        <input type="time" id="timeInput">
-        
-        <label for="airlineInput">航空公司：</label>
-        <input type="text" id="airlineInput" placeholder="例如：韓亞航空、中華航空">
-        
-        <label for="flightInput">航班號碼：</label>
-        <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
-        
-        <label for="pickupInput">上車地點：</label>
-        <input type="text" id="pickupInput" placeholder="例如：第一航廈、弘大">
-        
-        <label for="dropOffInput">下車地點：</label>
-        <input type="text" id="dropOffInput" placeholder="例如：明洞、弘大">
-    </div>
+        <!-- 步驟 1：選擇服務類型 -->
+        <label for="serviceType">選擇服務類型：</label>
+        <select id="serviceType">
+            <option value="">請選擇</option>
+            <option value="接機服務">接機 (機場至市區)</option>
+            <option value="送機服務">送機 (市區至機場)</option>
+        </select>
 
-    <div id="suggestions" class="suggestions hidden"></div>
-    <div id="highlightBox" class="highlight-box hidden"></div>
-    <p id="noResults" class="no-results hidden">目前無符合條件的路線。</p>
+        <!-- 步驟 2：其他搜尋欄位 -->
+        <div id="searchSection" class="hidden form-section">
+            <label id="flightTimeLabel" for="timeInput">航班時間：</label>
+            <input type="time" id="timeInput">
+            
+            <label for="airlineInput">航空公司：</label>
+            <input type="text" id="airlineInput" placeholder="例如：韓亞航空、中華航空">
+            
+            <label for="flightInput">航班號碼：</label>
+            <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
+            
+            <label for="pickupInput">上車地點：</label>
+            <input type="text" id="pickupInput" placeholder="例如：第一航廈、弘大">
+            
+            <label for="dropOffInput">下車地點：</label>
+            <input type="text" id="dropOffInput" placeholder="例如：明洞、弘大">
+        </div>
+
+        <div id="suggestions" class="suggestions hidden"></div>
+        <div id="highlightBox" class="highlight-box hidden"></div>
+        <p id="noResults" class="no-results hidden">目前無符合條件的路線。</p>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
     <script>
@@ -108,8 +133,9 @@
             .then(data => {
                 routes = data.map(item => ({
                     ...item,
-                    航班時間: item["航班時間"] || "00:00",  // 確保顯示預設值
-                    集合處: item["集合處"].replace("T1", "第一航廈").replace("T2", "第二航廈")
+                    航班時間: item["航班時間"] || "00:00",
+                    集合處: item["集合處"].replace("T1", "第一航廈").replace("T2", "第二航廈"),
+                    下車處: item["下車處"].replace("T1", "第一航廈").replace("T2", "第二航廈")
                 }));
                 console.log("已成功載入路線資料");
             });
@@ -189,28 +215,16 @@
                 noResults.classList.add("hidden");
                 suggestions.innerHTML = results.map(result => {
                     const durationInMinutes = convertToMinutes(result["預計車程"]);
-                    if (result["路線類型"] === "接機服務") {
-                        return `
-                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                                <b>路線代號：</b>${result.Route}<br>
-                                配合航班：${result.航班號碼} (${result.航班時間} 抵達)<br>
-                                集合處：${result.集合處}<br>
-                                預計路程時間：${durationInMinutes} 分鐘<br>
-                                下車地點：${result.下車處}
-                            </div>
-                        `;
-                    } else {
-                        return `
-                            <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
-                                <b>路線代號：</b>${result.Route}<br>
-                                建議航班：${result.航班號碼} (${result.航班時間} 出發)<br>
-                                集合時間地點：${result.集合處} (${result.集合時間})<br>
-                                預計路程時間：${durationInMinutes} 分鐘<br>
-                                預計抵達時間：${result.預計到達時間}<br>
-                                下車地點：${result.下車處}
-                            </div>
-                        `;
-                    }
+                    return `
+                        <div class="suggestion-item" onclick="showHighlight('${result.Route}')">
+                            <b>路線代號：</b>${result.Route}<br>
+                            航班號碼：${result.航班號碼} (${result.航班時間})<br>
+                            集合處：${result.集合處}<br>
+                            預計路程時間：${durationInMinutes} 分鐘<br>
+                            ${result["路線類型"] === "送機服務" ? `預計抵達時間：${result.預計到達時間}<br>` : ""}
+                            下車地點：${result.下車處}
+                        </div>
+                    `;
                 }).join('');
                 suggestions.classList.remove("hidden");
             }
