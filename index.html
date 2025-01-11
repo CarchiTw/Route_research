@@ -31,6 +31,7 @@
         }
         input, select {
             width: 100%;
+            box-sizing: border-box;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -92,7 +93,7 @@
 </head>
 <body>
     <div class="container">
-        <h2 style="text-align: center; color: #333;">選擇您的路線</h2>
+        <h2 style="text-align: center; color: #333;">Carchi 咖起 路線搜尋器🔍</h2>
         <div class="info-box">
             <p>🚨 <b>航班路線提醒</b></p>
             <p>送機路線目前僅提供早上 10 點前的航班</p>
@@ -136,11 +137,14 @@
         <div id="suggestions" class="suggestions hidden"></div>
         <div id="highlightBox" class="highlight-box hidden"></div>
         <p id="noResults" class="no-results hidden">目前無符合條件的路線。</p>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
     <script>
         let routes = [];
+        let airlinesSet = new Set();
+        let pickupSet = new Set();
+        let dropOffSet = new Set();
 
         // 動態讀取 JSON 檔案
         fetch('All_Route.json')
@@ -152,18 +156,19 @@
                     集合處: item["集合處"].replace("T1", "第一航廈").replace("T2", "第二航廈"),
                     下車處: item["下車處"].replace("T1", "第一航廈").replace("T2", "第二航廈")
                 }));
+
+                data.forEach(item => {
+                    item["航空公司"].split("/").forEach(airline => airlinesSet.add(airline.trim()));
+                    pickupSet.add(item["集合處"]);
+                    dropOffSet.add(item["下車處"]);
+                });
+
+                populateSelectOptions(document.getElementById("airlineInput"), airlinesSet);
+                populateSelectOptions(document.getElementById("pickupInput"), pickupSet);
+                populateSelectOptions(document.getElementById("dropOffInput"), dropOffSet);
                 console.log("已成功載入路線資料");
             });
-            // 提取選項資料
-            data.forEach(item => {
-                item["航空公司"].split("/").forEach(airline => airlinesSet.add(airline.trim()));
-                pickupSet.add(item["集合處"]);
-                dropOffSet.add(item["下車處"]);
-            });
-            populateSelectOptions(document.getElementById("airlineInput"), airlinesSet);
-            populateSelectOptions(document.getElementById("pickupInput"), pickupSet);
-            populateSelectOptions(document.getElementById("dropOffInput"), dropOffSet);
-        });
+
         function populateSelectOptions(selectElement, dataSet) {
             dataSet.forEach(option => {
                 const optionElement = document.createElement("option");
