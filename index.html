@@ -328,6 +328,7 @@
             }
         
             noResults.style.display = "none";  // 隱藏無結果提示
+            suggestionsWrapper.style.display = "flex";  // 水平排列結果
         
             results.forEach(result => {
                 const durationInMinutes = convertToMinutes(result["預計車程"]);
