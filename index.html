@@ -27,23 +27,38 @@
             color: #333;
             font-size: 20px;
         }
-        .info-box {
+        .collapsible-info {
             background-color: #fffae5;
-            color: #d35400;
             border-radius: 8px;
-            padding: 8px;
+            padding: 10px;
+            cursor: pointer;
             text-align: center;
-            font-size: 14px;
-            line-height: 1.4em;
+            color: #d35400;
+            margin-bottom: 10px;
+        }
+        .collapsible-content {
+            display: none;
+            padding: 10px 8px;
+            border-radius: 8px;
+            background-color: #fff5dc;
+            text-align: center;
+        }
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            width: 100%;
+            font-size: 13px;
         }
         .highlight-box {
             background-color: #e8f5e9;
-            border: 1px solid #4CAF50;
+            padding: 10px;
             border-radius: 6px;
-            padding: 8px;
-            margin-top: 10px; /* 與篩選器保持間距 */
-            text-align: center;
+            border: 1px solid #4CAF50;
             display: none;
+            margin-top: 10px;
         }
         label {
             font-size: 13px;
@@ -66,7 +81,7 @@
         .suggestion-item {
             background-color: white;
             border-radius: 6px; /* 減小圓角 */
-            padding: 8px; /* 減少內部空間 */
+            padding: 10px; /* 減少內部空間 */
             margin-bottom: 6px; /* 縮短間距 */
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 減弱陰影 */
@@ -89,45 +104,49 @@
 <body>
     <div class="container">
         <h2>Carchi 咖起 路線搜尋器🔍</h2>
-        <div class="info-box">
-            🚨<b>航班路線提醒</b>
-            <p>接機服務暫僅供<strong>「夜間」</strong>航班，送機服務暫僅提供<strong>「早晨」</strong>航班</p>
-            <p>若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！</p>
+        <div class="collapsible-info" onclick="toggleInfo()">找不到您的航班嗎？點擊查看提示！</div>
+        <div class="collapsible-content" id="infoBox">
+            🚨<b>航班路線提醒</b><br>
+            接機服務暫僅供<strong>「夜間」</strong>航班，送機服務暫僅提供<strong>「早晨」</strong>航班<br>
+            若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！
         </div>
-        <!-- 篩選器 -->
-        <!-- 步驟 1：選擇服務類型 -->
-        <label for="serviceType">選擇服務類型：</label>
-        <select id="serviceType">
-            <option value="">請選擇</option>
-            <option value="接機服務">接機 (機場至市區)</option>
-            <option value="送機服務">送機 (市區至機場)</option>
-        </select>
+        <!-- Form Fields -->
+        <div class="form-group">
+            <label for="serviceType">選擇服務類型</label>
+            <select id="serviceType">
+                <option value="">請選擇</option>
+                <option value="接機服務">接機 (機場至市區)</option>
+                <option value="送機服務">送機 (市區至機場)</option>
+            </select>
 
-        <!-- 步驟 2：其他搜尋欄位 -->
-        <label id="flightTimeLabel" for="timeInput">航班時間：</label>
-        <input type="time" id="timeInput" class="disabled">
+            <label for="airlineInput">航空公司</label>
+            <select id="airlineInput">
+                <option value="">選擇航空公司</option>
+            </select>
+        </div>
 
-        <label for="airlineInput">航空公司：</label>
-        <select id="airlineInput" class="disabled">
-            <option value="">選擇航空公司</option>
-        </select>
+        <div class="form-group">
+            <label for="timeInput">航班時間</label>
+            <input type="time" id="timeInput">
 
-        <label for="flightInput">航班號碼：</label>
-        <input type="text" id="flightInput" class="disabled" placeholder="例如：OZ714、CI9066">
+            <label for="flightInput">航班號碼</label>
+            <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
+        </div>
 
-        <label for="pickupInput">上車地點：</label>
-        <select id="pickupInput" class="disabled">
-            <option value="">選擇上車地點</option>
-        </select>
+        <div class="form-group">
+            <label for="pickupInput">上車地點</label>
+            <select id="pickupInput">
+                <option value="">選擇上車地點</option>
+            </select>
 
-        <label for="dropOffInput">下車地點：</label>
-        <select id="dropOffInput" class="disabled">
-            <option value="">選擇下車地點</option>
-        </select>
+            <label for="dropOffInput">下車地點</label>
+            <select id="dropOffInput">
+                <option value="">選擇下車地點</option>
+            </select>
+        </div>
         
         <!-- highlight-box 放置在篩選器下方 -->
         <div id="highlightBox" class="highlight-box"></div>
-
         <div id="suggestions" class="suggestions"></div>
         <p id="noResults" class="no-results">目前無符合條件的路線。</p>
 
@@ -162,7 +181,14 @@
                 selectElement.appendChild(optionElement);
             });
         }
-    
+        function toggleInfo() {
+            const infoBox = document.getElementById("infoBox");
+            infoBox.style.display = infoBox.style.display === "none" || !infoBox.style.display ? "block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            toggleInfo(); // 默認關閉
+        });
         const serviceTypeSelect = document.getElementById("serviceType");
         const searchSection = document.getElementById("searchSection");
         const flightTimeLabel = document.getElementById("flightTimeLabel");
