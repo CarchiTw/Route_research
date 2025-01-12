@@ -17,10 +17,17 @@
             width: 95vw; /* 調整為視窗寬度的 95% */
             max-width: 420px; /* 最大寬度限制，避免過寬 */
             padding: 10px 15px; /* 縮小內邊距，增加留白空間 */
-            margin: 20px 0; /* 上下增加距離，避免緊貼邊框 */
+            margin: 20px auto; /* 上下增加距離，避免緊貼邊框 */
             background-color: white;
-            border-radius: 18px; /* 圓角更明顯 */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* 更輕的陰影效果 */
+            border-radius: 16px; /* 圓角更明顯 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 更輕的陰影效果 */
+        }
+        /* 手機螢幕調整 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px 10px;  /* 減少內部 padding */
+                border-radius: 12px;  /* 手機畫面時圓角稍微變小 */
+            }
         }
         h2 {
             text-align: center;
