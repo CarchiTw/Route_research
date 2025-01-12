@@ -81,15 +81,6 @@
             border-radius: 8px;
             font-size: 16px; /* 調整字體讓操作更輕鬆 */
         }
-        input,select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 8px; /* 縮小 padding 方便操作 */
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px; /* 調整字體讓操作更輕鬆 */
-        }
         .suggestions-wrapper {
             overflow-x: auto;
             white-space: nowrap;
@@ -351,7 +342,8 @@
                     suggestionDiv.innerHTML = `
                         <b>路線代號：</b>${result.Route || '無'}<br>
                         <b>航空公司：</b>${result.航空公司 || '無'}<br>
-                        <b>航班號碼：</b>${result.航班號碼 || '無'} (${result.航班時間 || '無'} 抵達)<br>
+                        <b>航班號碼：</b>${result.航班號碼 || '無'}<br>
+                        <b>航班時間：(${result.航班時間 || '無'} 抵達)<br>
                         <b>上車地點：</b>${result.集合處 || '無'}<br>
                         <b>預計車程：</b>${durationInMinutes} 分鐘<br>
                         <b>下車地點：</b>${result.下車處 || '無'}
@@ -360,7 +352,8 @@
                     suggestionDiv.innerHTML = `
                         <b>路線代號：</b>${result.Route || '無'}<br>
                         <b>航空公司：</b>${result.航空公司 || '無'}<br>
-                        <b>建議航班：</b>${result.航班號碼 || '無'} (${result.航班時間 || '無'} 起飛)<br>
+                        <b>建議航班：</b>${result.航班號碼 || '無'}<br> 
+                        <b>航班時間：</b>(${result.航班時間 || '無'} 起飛)<br>
                         <b>集合時間地點：</b>${result.集合處 || '無'} (${result.集合時間 || '無'})<br>
                         <b>預計車程：</b>${durationInMinutes} 分鐘<br>
                         <b>預計抵達時間：</b>${result.預計到達時間 || '無'}<br>
