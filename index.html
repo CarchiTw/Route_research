@@ -117,19 +117,27 @@
             margin-top: 10px;
             display: none;
         }
-        .line-btn {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #00c300;  /* LINE 綠色主色 */
+        .line-btn, .copy-btn {
+            margin-right: 10px;  /* 讓按鈕之間有間距 */
+            padding: 10px 16px;
+            background-color: #00c300;
             color: white;
             border: none;
-            border-radius: 24px;  /* 圓角按鈕 */
+            border-radius: 24px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* 提升層次感 */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease;
-        }  
+        }
+        
+        .copy-btn {
+            background-color: #007bff;  /* 藍色按鈕 */
+        }
+        
+        .copy-btn:hover {
+            background-color: #0056b3;  /* 藍色 hover */
+        } 
         .line-btn:hover {
             background-color: #009a00;  /* 當滑鼠移上去時顏色變深 */
         }
@@ -407,13 +415,24 @@
         
             suggestionsWrapper.style.display = "flex";  // 確保為水平排列的 Carousel
         }
-        
+        function copyToClipboard(text) {
+            // 將文字複製到剪貼簿
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`路線代號「${text}」已複製`);
+            }).catch(err => {
+                console.error('無法複製文字', err);
+                alert('複製失敗，請手動複製');
+            });
+        }
         function showHighlight(route) {
             const highlightBox = document.getElementById("highlightBox");
             highlightBox.style.display = "block";
             highlightBox.innerHTML = `
             <b>您選擇的路線代號：</b>${route}<br>
-            <button class="line-btn" onclick="alert('已帶回 LINE Bot')">代入 LINE</button>
+            <div style="margin-top: 10px;">
+                <button class="line-btn" onclick="alert('已帶回 LINE Bot')">代入 LINE</button>
+                <button class="copy-btn" onclick="copyToClipboard('${route}')">複製路線代號</button>
+            </div>
         `;
         }
     
