@@ -12,24 +12,25 @@
             justify-content: center;
             align-items: flex-start;
             width: 100%;
-            overflow-x: hidden;
         }
         .container {
-            width: 100vw; /* 佔滿螢幕寬度 */
-            max-width: 480px; /* 限制寬度避免太大 */
-            padding: 15px;
+            width: 95vw; /* 調整為視窗寬度的 95% */
+            max-width: 420px; /* 最大寬度限制，避免過寬 */
+            padding: 10px 15px; /* 縮小內邊距，增加留白空間 */
+            margin: 20px 0; /* 上下增加距離，避免緊貼邊框 */
             background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 18px; /* 圓角更明顯 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* 更輕的陰影效果 */
         }
         h2 {
             text-align: center;
             color: #333;
             font-size: 20px;
+            margin-top: 0; /* 讓標題不再擠壓 */
         }
         .info-toggle {
             background-color: #fffae5;
-            padding: 10px 15px;
+            padding: 8px 12px; /* 減小padding，避免太大 */
             border-radius: 8px;
             border: 1px solid #ffd54f;
             cursor: pointer;
@@ -78,7 +79,7 @@
             padding: 8px; /* 縮小 padding 方便操作 */
             margin-bottom: 10px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 12px; /* 調整圓角 */
             font-size: 16px; /* 調整字體讓操作更輕鬆 */
         }
         .suggestions-wrapper {
