@@ -7,11 +7,12 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
-            background-color: #f4f6f9;
+            background: linear-gradient(to bottom, #f4f9ff, #e6eef5);  /* 背景漸層 */
             display: flex;
             justify-content: center;
             align-items: flex-start;
             width: 100%;
+            padding-top: 20px;  /* 增加上下留白 */
         }
         .container {
             width: 95vw; /* 調整為視窗寬度的 95% */
@@ -20,7 +21,8 @@
             margin: 20px auto; /* 上下增加距離，避免緊貼邊框 */
             background-color: white;
             border-radius: 16px; /* 圓角更明顯 */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 更輕的陰影效果 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* 更輕的陰影效果 */
+            border: 1px solid #f0f0f0;  /* 柔和邊框，增加質感 */
         }
         /* 手機螢幕調整 */
         @media (max-width: 600px) {
@@ -46,9 +48,10 @@
             margin-bottom: 6px;
         }
         .filter-box {
-            background-color: #f9f9f9;
+            background-color: rgba(255, 255, 255, 0.8);  /* 加入透明感 */
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.05);  /* 增加內部陰影 */
             margin-bottom: 15px;
         }
         .info-box {
@@ -74,8 +77,8 @@
         }
         .highlight-box {
             background-color: #e8f5e9;
-            padding: 25px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 8px;
             border: 1px solid #4CAF50;
             display: none;
             margin-top: 10px;
@@ -92,6 +95,9 @@
         .suggestions-wrapper {
             overflow-x: auto;
             white-space: nowrap;
+            margin-top: 10px;
+            border-radius: 8px;
+            background-color: rgba(240, 240, 240, 0.9);  /* 建議結果區帶灰色背景 */
             display: flex;
             gap: 10px;
             padding: 15px 15px;  /* 增加左右 padding，避免切邊 */
