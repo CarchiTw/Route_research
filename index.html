@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Carchi 咖起 路線搜尋器🔍</title>
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
             margin: 0;
-            padding: 0;
             background-color: #f4f6f9;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
+            width: 100%;
             overflow-x: hidden;
         }
         .container {
-            width: 95vw;
-            max-width: 480px;
+            width: 100vw; /* 佔滿螢幕寬度 */
+            max-width: 480px; /* 限制寬度避免太大 */
+            padding: 15px;
             background-color: white;
             border-radius: 16px;
-            padding: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
         h2 {
             text-align: center;
@@ -44,8 +40,8 @@
             background-color: #e8f5e9;
             border: 1px solid #4CAF50;
             border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 10px;
+            padding: 10px;
+            margin-top: 10px; /* 與篩選器保持間距 */
             text-align: center;
             display: none;
             width: 100%;
@@ -66,7 +62,7 @@
             font-size: 16px; /* 調整字體讓操作更輕鬆 */
         }
         .suggestions {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .suggestion-item {
             background-color: white;
@@ -99,7 +95,7 @@
             <p>接機服務暫僅供<strong>「夜間」</strong>航班，送機服務暫僅提供<strong>「早晨」</strong>航班</p>
             <p>若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！</p>
         </div>
-        <div id="highlightBox" class="highlight-box"></div>
+        <!-- 篩選器 -->
         <!-- 步驟 1：選擇服務類型 -->
         <label for="serviceType">選擇服務類型：</label>
         <select id="serviceType">
@@ -129,6 +125,9 @@
         <select id="dropOffInput" class="disabled">
             <option value="">選擇下車地點</option>
         </select>
+        
+        <!-- highlight-box 放置在篩選器下方 -->
+        <div id="highlightBox" class="highlight-box"></div>
 
         <div id="suggestions" class="suggestions"></div>
         <p id="noResults" class="no-results">目前無符合條件的路線。</p>
