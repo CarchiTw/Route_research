@@ -106,6 +106,27 @@
             margin-top: 10px;
             display: none;
         }
+        .line-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #00c300;  /* LINE 綠色主色 */
+            color: white;
+            border: none;
+            border-radius: 24px;  /* 圓角按鈕 */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* 提升層次感 */
+            transition: background-color 0.3s ease;
+        }  
+        .line-btn:hover {
+            background-color: #009a00;  /* 當滑鼠移上去時顏色變深 */
+        }
+        .line-btn:active {
+            background-color: #007f00;
+            box-shadow: none; /* 點擊時取消陰影 */
+        }
+        
     </style>
 </head>
 <body>
@@ -378,7 +399,10 @@
         function showHighlight(route) {
             const highlightBox = document.getElementById("highlightBox");
             highlightBox.style.display = "block";
-            highlightBox.innerHTML = `<b>您選擇的路線代號：</b>${route}<br><button onclick="alert('已帶回 LINE Bot')">確認帶回 LINE Bot</button>`;
+            highlightBox.innerHTML = `
+            <b>您選擇的路線代號：</b>${route}<br>
+            <button class="line-btn" onclick="alert('已帶回 LINE Bot')">代入 LINE</button>
+        `;
         }
     
         function sendToLine(route) {
