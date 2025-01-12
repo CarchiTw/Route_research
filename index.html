@@ -260,7 +260,7 @@
             inputs.forEach(input => input.value = "");
         
             // 清空結果區域
-            suggestions.innerHTML = "";
+            suggestionsWrapper.innerHTML = "";  // 修正為 suggestionsWrapper
             highlightBox.classList.add("hidden");
             noResults.style.display = "none";
         }
@@ -272,6 +272,8 @@
             const dropOffOptions = serviceType === "接機服務"
                 ? ["弘大", "明洞", "台北"]
                 : ["仁川第一航廈", "仁川第二航廈"];
+            console.log("Pickup options: ", pickupOptions);
+            console.log("Drop-off options: ", dropOffOptions);
     
             populateSelect(pickupInput, pickupOptions);
             populateSelect(dropOffInput, dropOffOptions);
