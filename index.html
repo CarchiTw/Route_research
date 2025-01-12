@@ -27,30 +27,36 @@
             color: #333;
             font-size: 20px;
         }
-        .collapsible-info {
+        .info-toggle {
             background-color: #fffae5;
+            padding: 10px 15px;
             border-radius: 8px;
-            padding: 10px;
+            border: 1px solid #ffd54f;
             cursor: pointer;
             text-align: center;
             color: #d35400;
             margin-bottom: 10px;
         }
-        .collapsible-content {
+        .info-box {
             display: none;
-            padding: 10px 8px;
+            padding: 15px;
             border-radius: 8px;
-            background-color: #fff5dc;
-            text-align: center;
+            background-color: #fff8d1;
+            border: 1px solid #ffca28;
+        }
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .form-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            width: calc(50% - 10px);
         }
-        .form-group label {
-            width: 100%;
-            font-size: 13px;
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: bold;
         }
         .highlight-box {
             background-color: #e8f5e9;
@@ -59,12 +65,6 @@
             border: 1px solid #4CAF50;
             display: none;
             margin-top: 10px;
-        }
-        label {
-            font-size: 13px;
-            display: block;
-            color: #555;
-            margin-bottom: 5px;
         }
         input, select {
             width: 100%;
@@ -75,22 +75,22 @@
             border-radius: 8px;
             font-size: 16px; /* 調整字體讓操作更輕鬆 */
         }
-        .suggestions {
-            margin-top: 8px;
+        .suggestions-wrapper {
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
         }
         .suggestion-item {
+            display: inline-block;
+            width: 220px;
             background-color: white;
-            border-radius: 6px; /* 減小圓角 */
-            padding: 10px; /* 減少內部空間 */
-            margin-bottom: 6px; /* 縮短間距 */
+            border-radius: 8px;
+            padding: 12px;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 減弱陰影 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 14px; /* 縮小文字讓列表更精簡 */
-        }
-        .suggestion-item:hover {
-            background-color: #f0f8ff;
         }
         .no-results {
             color: #757575;
@@ -104,51 +104,61 @@
 <body>
     <div class="container">
         <h2>Carchi 咖起 路線搜尋器🔍</h2>
-        <div class="collapsible-info" onclick="toggleInfo()">找不到您的航班嗎？點擊查看提示！</div>
-        <div class="collapsible-content" id="infoBox">
+        <!-- 點擊展開提示區 -->
+        <div class="info-toggle" onclick="toggleInfoBox()">找不到您的航班嗎？點擊查看提示！</div>
+        <div class="info-box" id="infoBox">
             🚨<b>航班路線提醒</b><br>
-            接機服務暫僅供<strong>「夜間」</strong>航班，送機服務暫僅提供<strong>「早晨」</strong>航班<br>
+            接機服務僅限<strong>「夜間」</strong>航班，送機服務僅限<strong>「早晨」</strong>航班<br>
             若找不到您想要的航班，歡迎使用 <a href="#">路線許願池</a> 功能！
-        </div>
-        <!-- Form Fields -->
-        <div class="form-group">
-            <label for="serviceType">選擇服務類型</label>
-            <select id="serviceType">
-                <option value="">請選擇</option>
-                <option value="接機服務">接機 (機場至市區)</option>
-                <option value="送機服務">送機 (市區至機場)</option>
-            </select>
+        <!-- 篩選器區塊 -->
+        <div class="form-container">
+            <div class="form-group">
+                <label for="serviceType">選擇服務類型</label>
+                <select id="serviceType">
+                    <option value="">請選擇</option>
+                    <option value="接機服務">接機 (機場至市區)</option>
+                    <option value="送機服務">送機 (市區至機場)</option>
+                </select>
+            </div>
 
-            <label for="airlineInput">航空公司</label>
-            <select id="airlineInput">
-                <option value="">選擇航空公司</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="airlineInput">航空公司</label>
+                <select id="airlineInput">
+                    <option value="">選擇航空公司</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="timeInput">航班時間</label>
-            <input type="time" id="timeInput">
+            <div class="form-group">
+                <label for="timeInput">航班時間</label>
+                <input type="time" id="timeInput">
+            </div>
 
-            <label for="flightInput">航班號碼</label>
-            <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
-        </div>
+            <div class="form-group">
+                <label for="flightInput">航班號碼</label>
+                <input type="text" id="flightInput" placeholder="例如：OZ714、CI9066">
+            </div>
 
-        <div class="form-group">
-            <label for="pickupInput">上車地點</label>
-            <select id="pickupInput">
-                <option value="">選擇上車地點</option>
-            </select>
+            <div class="form-group">
+                <label for="pickupInput">上車地點</label>
+                <select id="pickupInput">
+                    <option value="">選擇上車地點</option>
+                </select>
+            </div>
 
-            <label for="dropOffInput">下車地點</label>
-            <select id="dropOffInput">
-                <option value="">選擇下車地點</option>
-            </select>
+            <div class="form-group">
+                <label for="dropOffInput">下車地點</label>
+                <select id="dropOffInput">
+                    <option value="">選擇下車地點</option>
+                </select>
+            </div>
         </div>
         
-        <!-- highlight-box 放置在篩選器下方 -->
-        <div id="highlightBox" class="highlight-box"></div>
-        <div id="suggestions" class="suggestions"></div>
+        <!-- 建議結果區 -->
+        <div id="suggestionsWrapper" class="suggestions-wrapper"></div>
         <p id="noResults" class="no-results">目前無符合條件的路線。</p>
+
+        <div id="highlightBox" class="highlight-box" style="display:none;"></div>
+    </div>
 
     </div>
     <script>
@@ -181,14 +191,11 @@
                 selectElement.appendChild(optionElement);
             });
         }
-        function toggleInfo() {
+        function toggleInfoBox() {
             const infoBox = document.getElementById("infoBox");
-            infoBox.style.display = infoBox.style.display === "none" || !infoBox.style.display ? "block" : "none";
+            infoBox.style.display = infoBox.style.display === "block" ? "none" : "block";
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            toggleInfo(); // 默認關閉
-        });
+        
         const serviceTypeSelect = document.getElementById("serviceType");
         const searchSection = document.getElementById("searchSection");
         const flightTimeLabel = document.getElementById("flightTimeLabel");
@@ -298,73 +305,65 @@
             if (pickup) filtered = filtered.filter(item => item["集合處"].toLowerCase().includes(pickup));
             if (dropOff) filtered = filtered.filter(item => item["下車處"].toLowerCase().includes(dropOff));
     
-            displaySuggestions(filtered);
+            displaySuggestions(filtered, serviceType);  // 傳入服務類型
         }
     
-        function displaySuggestions(results) {
-            suggestions.innerHTML = "";  // 清空先前的建議清單
+        function displaySuggestions(results, serviceType) {
+            const suggestionsWrapper = document.getElementById("suggestionsWrapper");
+            suggestionsWrapper.innerHTML = "";  // 清空建議列表
             highlightBox.classList.add("hidden");  // 隱藏 highlightBox
         
             if (results.length === 0) {
-                // 顯示 "目前無符合條件的路線"
-                noResults.style.display = "block";  // 顯示提示框
-                suggestions.style.display = "none";  // 隱藏建議結果區域
-            } else {
-                noResults.style.display = "none";  // 隱藏無結果提示
-                suggestions.style.display = "block";  // 顯示建議結果區域
-        
-                results.forEach(result => {
-                    const durationInMinutes = convertToMinutes(result["預計車程"]);
-                    const suggestionDiv = document.createElement("div");
-                    suggestionDiv.className = "suggestion-item";
-        
-                    // 根據「路線類型」決定顯示內容
-                    if (result["路線類型"] === "接機服務") {
-                        suggestionDiv.innerHTML = `
-                            路線代號：${result.Route || ''}<br>
-                            航空公司：${result.航空公司 || ''}<br>
-                            配合航班：${result.航班號碼 || ''} (${result.航班時間 || ''} 抵達)<br>
-                            上車地點：${result.集合處 || ''}<br>
-                            預計車程：${durationInMinutes} 分鐘<br>
-                            下車地點：${result.下車處 || ''}
-                        `;
-                    } else {
-                        suggestionDiv.innerHTML = `
-                            路線代號：${result.Route || ''}<br>
-                            航班公司：${result.航空公司 || ''}<br>
-                            建議航班：${result.航班號碼 || ''} (${result.航班時間 || ''} 起飛)<br>
-                            集合時間地點：${result.集合處 || ''} (${result.集合時間 || ''})<br>
-                            預計車程：${durationInMinutes} 分鐘<br>
-                            預計抵達時間：${result.預計到達時間 || ''}<br>
-                            下車地點：${result.下車處 || ''}
-                        `;
-                    }
-        
-                    // 綁定點擊事件來顯示 highlightBox
-                    suggestionDiv.addEventListener("click", () => {
-                        showHighlight(result.Route || "無路線代號");
-                    });
-        
-                    suggestions.appendChild(suggestionDiv);
-                });
-            }
-        }
-        
-        function showHighlight(route) {
-            console.log("Route 傳入值：", route);  // 確認 route 值是否正確
-            if (!route) {
-                console.error("無法顯示路線資訊，Route 為空值。");
+                noResults.style.display = "block";  // 顯示提示
                 return;
             }
         
-            highlightBox.innerHTML = `
-                <b>您選擇的路線代號：</b>${route}<br>
-                <button onclick="sendToLine('${route}')">確認帶回 LINE Bot</button>
-            `;
-            
-            // 強制移除 display: none
+            noResults.style.display = "none";  // 隱藏無結果提示
+        
+            results.forEach(result => {
+                const durationInMinutes = convertToMinutes(result["預計車程"]);
+                const suggestionDiv = document.createElement("div");
+                suggestionDiv.className = "suggestion-item";
+        
+                // 根據服務類型決定顯示的訊息
+                if (serviceType === "接機服務") {
+                    suggestionDiv.innerHTML = `
+                        <b>路線代號：</b>${result.Route || '無'}<br>
+                        <b>航空公司：</b>${result.航空公司 || '無'}<br>
+                        <b>航班號碼：</b>${result.航班號碼 || '無'} (${result.航班時間 || '無'} 抵達)<br>
+                        <b>上車地點：</b>${result.集合處 || '無'}<br>
+                        <b>預計車程：</b>${durationInMinutes} 分鐘<br>
+                        <b>下車地點：</b>${result.下車處 || '無'}
+                    `;
+                } else if (serviceType === "送機服務") {
+                    suggestionDiv.innerHTML = `
+                        <b>路線代號：</b>${result.Route || '無'}<br>
+                        <b>航空公司：</b>${result.航空公司 || '無'}<br>
+                        <b>建議航班：</b>${result.航班號碼 || '無'} (${result.航班時間 || '無'} 起飛)<br>
+                        <b>集合時間地點：</b>${result.集合處 || '無'} (${result.集合時間 || '無'})<br>
+                        <b>預計車程：</b>${durationInMinutes} 分鐘<br>
+                        <b>預計抵達時間：</b>${result.預計到達時間 || '無'}<br>
+                        <b>下車地點：</b>${result.下車處 || '無'}
+                    `;
+                } else {
+                    suggestionDiv.innerHTML = `<b>無法識別服務類型，請檢查輸入。</b>`;
+                }
+        
+                // 點擊顯示 highlightBox
+                suggestionDiv.addEventListener("click", () => {
+                    showHighlight(result.Route || "無路線代號");
+                });
+        
+                suggestionsWrapper.appendChild(suggestionDiv);
+            });
+        
+            suggestionsWrapper.style.display = "flex";  // 確保為水平排列的 Carousel
+        }
+        
+        function showHighlight(route) {
+            const highlightBox = document.getElementById("highlightBox");
             highlightBox.style.display = "block";
-            highlightBox.classList.remove("hidden");
+            highlightBox.innerHTML = `<b>您選擇的路線代號：</b>${route}<br><button onclick="alert('已帶回 LINE Bot')">確認帶回 LINE Bot</button>`;
         }
     
         function sendToLine(route) {
